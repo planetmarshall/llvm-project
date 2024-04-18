@@ -69,6 +69,7 @@ option(LLDB_ENFORCE_STRICT_TEST_REQUIREMENTS
   "Fail to configure if certain requirements are not met for testing." OFF)
 option(LLDB_TEST_USE_VENDOR_PACKAGES
   "Use packages from lldb/third_party/Python/module instead of system deps." OFF)
+option(LLDB_SKIP_LINK_PYTHON "Dont link to the Python library, so that liblldb can be used as a Python extension module" ON)
 
 set(LLDB_GLOBAL_INIT_DIRECTORY "" CACHE STRING
   "Path to the global lldbinit directory. Relative paths are resolved relative to the

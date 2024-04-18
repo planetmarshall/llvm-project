@@ -127,7 +127,7 @@ if(LLDB_ENABLE_PYTHON AND (BUILD_SHARED_LIBS OR LLVM_LINK_LLVM_DYLIB) AND UNIX A
   set_property(TARGET liblldb APPEND PROPERTY INSTALL_RPATH "\$ORIGIN/../../../../lib${LLVM_LIBDIR_SUFFIX}")
 endif()
 
-if(Python3_RPATH)
+if(Python3_RPATH AND NOT LLDB_SKIP_LINK_PYTHON)
   set_property(TARGET liblldb APPEND PROPERTY INSTALL_RPATH "${Python3_RPATH}")
   set_property(TARGET liblldb APPEND PROPERTY BUILD_RPATH   "${Python3_RPATH}")
 endif()
@@ -147,10 +147,18 @@ if(LLDB_ENABLE_PYTHON)
     set_property(SOURCE ${lldb_python_wrapper} APPEND_STRING
       PROPERTY COMPILE_FLAGS " -Wno-unused-function")
   endif()
-  if (LLVM_COMPILER_IS_GCC_COMPATIBLE AND
-      NOT "${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
-    set_property(SOURCE ${lldb_python_wrapper} APPEND_STRING
-      PROPERTY COMPILE_FLAGS " -Wno-sequence-point -Wno-cast-qual")
+  if (LLVM_COMPILER_IS_GCC_COMPATIBLE)
+    if(NOT "${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")
+        set_property(SOURCE ${lldb_python_wrapper} APPEND_STRING
+          PROPERTY COMPILE_FLAGS " -Wno-sequence-point -Wno-cast-qual")
+    endif()
+    if (LLDB_SKIP_LINK_PYTHON)
+      if (APPLE)  
+        target_link_options(liblldb PRIVATE "LINKER:-undefined,dynamic_lookup")
+      else()  
+        target_link_options(liblldb PRIVATE "LINKER:--unresolved-symbols=ignore-all")
+      endif()  
+    endif()    
   endif ()
 endif()
 

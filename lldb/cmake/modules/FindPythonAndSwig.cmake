@@ -7,7 +7,7 @@
 macro(FindPython3)
   # Use PYTHON_HOME as a hint to find Python 3.
   set(Python3_ROOT_DIR "${PYTHON_HOME}")
-  find_package(Python3 COMPONENTS Interpreter Development)
+  find_package(Python3 COMPONENTS ${ARGV})
   if(Python3_FOUND AND Python3_Interpreter_FOUND)
 
     # The install name for the Python 3 framework in Xcode is relative to
@@ -34,11 +34,19 @@ macro(FindPython3)
   endif()
 endmacro()
 
-if(Python3_LIBRARIES AND Python3_INCLUDE_DIRS AND Python3_EXECUTABLE AND LLDB_ENABLE_SWIG)
-  set(PYTHONANDSWIG_FOUND TRUE)
+if(Python3_INCLUDE_DIRS AND Python3_EXECUTABLE AND LLDB_ENABLE_SWIG)
+  if(LLDB_SKIP_LINK_PYTHON)  
+    set(PYTHONANDSWIG_FOUND TRUE)
+  elseif (Python3_LIBRARIES)
+    set(PYTHONANDSWIG_FOUND TRUE)
+  endif()  
 else()
   if (LLDB_ENABLE_SWIG)
-    FindPython3()
+      if (LLDB_SKIP_LINK_PYTHON)  
+          FindPython3(Interpreter Development.Module)
+      else()  
+          FindPython3(Interpreter Development)
+      endif()    
   else()
     message(STATUS "SWIG 4 or later is required for Python support in LLDB but could not be found")
   endif()
@@ -55,12 +63,13 @@ else()
   endif()
 
   include(FindPackageHandleStandardArgs)
+  set(PYTHON_REQUIRED_ARGS Python3_INCLUDE_DIRS Python3_EXECUTABLE LLDB_ENABLE_SWIG)
+  if (NOT LLDB_SKIP_LINK_PYTHON)
+    list(APPEND PYTHON_REQUIRED_ARGS Python3_LIBRARIES)
+  endif()  
   find_package_handle_standard_args(PythonAndSwig
                                     FOUND_VAR
                                       PYTHONANDSWIG_FOUND
                                     REQUIRED_VARS
-                                      Python3_LIBRARIES
-                                      Python3_INCLUDE_DIRS
-                                      Python3_EXECUTABLE
-                                      LLDB_ENABLE_SWIG)
+                                      ${PYTHON_REQUIRED_ARGS})
 endif()
