@@ -23,8 +23,7 @@ add_llvm_component_library(LLVMWindowsManifest
 if(LLVM_ENABLE_LIBXML2)
   # CMAKE_BUILD_TYPE is only meaningful to single-configuration generators.
   if(CMAKE_BUILD_TYPE)
-    string(TOUPPER ${CMAKE_BUILD_TYPE} build_type)
-    get_property(libxml2_library TARGET LibXml2::LibXml2 PROPERTY LOCATION_${build_type})
+      set(libxml2_library ${libxml2_LIBRARIES})
   endif()
   if(NOT libxml2_library)
     get_property(libxml2_library TARGET LibXml2::LibXml2 PROPERTY LOCATION)
