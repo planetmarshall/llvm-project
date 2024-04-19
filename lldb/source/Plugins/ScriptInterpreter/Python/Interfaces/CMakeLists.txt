@@ -16,7 +16,7 @@ add_definitions(-DLLDB_PYTHON_EXE_RELATIVE_PATH="${LLDB_PYTHON_EXE_RELATIVE_PATH
 
 
 if (LLDB_ENABLE_LIBEDIT)
-  list(APPEND LLDB_LIBEDIT_LIBS LibEdit::LibEdit)
+  list(APPEND LLDB_LIBEDIT_LIBS editline::editline)
 endif()
 
 add_lldb_library(lldbPluginScriptInterpreterPythonInterfaces

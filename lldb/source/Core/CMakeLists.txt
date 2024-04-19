@@ -10,7 +10,7 @@ set(LLDB_CURSES_LIBS)
 set(LLDB_LIBEDIT_LIBS)
 
 if (LLDB_ENABLE_CURSES)
-  list(APPEND LLDB_CURSES_LIBS ${PANEL_LIBRARIES} ${CURSES_LIBRARIES})
+  list(APPEND LLDB_CURSES_LIBS ${Curses_LIBRARIES})
   if(LLVM_ENABLE_TERMINFO)
     list(APPEND LLDB_CURSES_LIBS ${Terminfo_LIBRARIES})
   endif()
@@ -107,5 +107,5 @@ add_dependencies(lldbCore
 set_target_properties(lldbCore PROPERTIES LINK_INTERFACE_MULTIPLICITY 5)
 
 if (LLDB_ENABLE_CURSES)
-  target_include_directories(lldbCore PRIVATE ${CURSES_INCLUDE_DIRS})
+  target_include_directories(lldbCore PRIVATE ${Curses_INCLUDE_DIRS})
 endif()
